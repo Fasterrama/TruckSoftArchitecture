@@ -2,7 +2,7 @@
 
 **Version:** 1.0
 **Date:** 2026-04-18
-**Author:** Engineering Team — Minvy
+**Author:** Engineering Team — Fasterrama
 **Stack:** Angular 15 · Spring Boot 3.3.1 · MySQL 8.0
 **Analytics Platform:** Mixpanel
 
@@ -67,15 +67,15 @@ patterns, and feature usage to guide product decisions.
 
 ### 2.1 Project Structure
 
-Minvy already has two Mixpanel projects:
+Create two new Mixpanel projects for TruckSoft:
 
 | Project | ID | Purpose |
 |---|---|---|
-| Minvy_QA | 2984481 | Testing / staging |
-| Minvy_Production | 2987343 | Production data |
+| TruckSoft_QA | <TRUCKSOFT_QA_PROJECT_ID> | Testing / staging |
+| TruckSoft_Production | <TRUCKSOFT_PROD_PROJECT_ID> | Production data |
 
 We will use these existing projects. All TruckSoft events will be prefixed or tagged to
-distinguish them from other Minvy products if the projects are shared. If isolation is
+ensure complete data isolation. Dedicated projects are
 preferred, create a dedicated project named **TruckSoft** under the same Mixpanel
 organization.
 
@@ -93,8 +93,8 @@ npm install --save-dev @types/mixpanel-browser
 export const environment = {
   production: false,
   mixpanel: {
-    token: '<MINVY_QA_TOKEN>',        // Project ID: 2984481
-    projectId: 2984481,
+    token: '<TRUCKSOFT_QA_TOKEN>',        // Project ID: <TRUCKSOFT_QA_PROJECT_ID>
+    projectId: <TRUCKSOFT_QA_PROJECT_ID>,
     debug: true,
     apiHost: 'https://api.mixpanel.com',
   },
@@ -104,8 +104,8 @@ export const environment = {
 export const environment = {
   production: true,
   mixpanel: {
-    token: '<MINVY_PRODUCTION_TOKEN>', // Project ID: 2987343
-    projectId: 2987343,
+    token: '<TRUCKSOFT_PROD_TOKEN>', // Project ID: <TRUCKSOFT_PROD_PROJECT_ID>
+    projectId: <TRUCKSOFT_PROD_PROJECT_ID>,
     debug: false,
     apiHost: 'https://api.mixpanel.com',
   },
@@ -135,12 +135,12 @@ mixpanel:
 
 # application-dev.yml
 mixpanel:
-  token: ${MIXPANEL_QA_TOKEN}       # Project 2984481
+  token: ${MIXPANEL_QA_TOKEN}       # Project <TRUCKSOFT_QA_PROJECT_ID>
   enabled: true
 
 # application-prod.yml
 mixpanel:
-  token: ${MIXPANEL_PROD_TOKEN}     # Project 2987343
+  token: ${MIXPANEL_PROD_TOKEN}     # Project <TRUCKSOFT_PROD_PROJECT_ID>
   enabled: true
 ```
 
@@ -148,9 +148,9 @@ mixpanel:
 
 | Environment | Mixpanel Project | Token Source |
 |---|---|---|
-| Local dev | Minvy_QA (2984481) | `.env.local` |
-| QA / Staging | Minvy_QA (2984481) | CI/CD secrets |
-| Production | Minvy_Production (2987343) | CI/CD secrets |
+| Local dev | TruckSoft_QA (<TRUCKSOFT_QA_PROJECT_ID>) | `.env.local` |
+| QA / Staging | TruckSoft_QA (<TRUCKSOFT_QA_PROJECT_ID>) | CI/CD secrets |
+| Production | TruckSoft_Production (<TRUCKSOFT_PROD_PROJECT_ID>) | CI/CD secrets |
 
 Never hardcode tokens. Use environment variables injected at build/deploy time.
 
@@ -1933,7 +1933,7 @@ public class TimbradoAlertScheduler {
                 String.format(
                     "Failure rate: %.1f%% (%d failed out of %d attempted) in the last hour.\\n"
                     + "Check Mixpanel dashboard: https://mixpanel.com/project/%s/view",
-                    failureRate, failed, attempted, "2987343"
+                    failureRate, failed, attempted, "<TRUCKSOFT_PROD_PROJECT_ID>"
                 )
             );
         }
@@ -2012,7 +2012,7 @@ Based on the system's current scale and typical usage patterns:
 **Free tier** (20M events/month limit). Even with 10x growth, we remain within the free
 tier.
 
-If the Minvy_QA and Minvy_Production projects already have volume from other products,
+If the TruckSoft_QA and TruckSoft_Production projects already have volume from other products,
 verify the combined monthly event count. At our projected volume, there is no incremental
 cost concern.
 
@@ -2068,7 +2068,7 @@ cost concern.
 
 ## Appendix C: Testing Checklist
 
-Before deploying each phase, verify in Mixpanel QA project (2984481):
+Before deploying each phase, verify in Mixpanel QA project (<TRUCKSOFT_QA_PROJECT_ID>):
 
 - [ ] Event appears in Live View within 5 seconds of action
 - [ ] All documented properties are present (no missing keys)
